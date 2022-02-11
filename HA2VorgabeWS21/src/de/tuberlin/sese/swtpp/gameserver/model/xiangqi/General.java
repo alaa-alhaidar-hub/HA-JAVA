@@ -1,4 +1,4 @@
-package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
+ package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
 //import java.util.List;
 

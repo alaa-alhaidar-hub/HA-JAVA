@@ -307,6 +307,7 @@ public class XiangqiGame extends Game implements Serializable {
 					resultAfterMove =  board.getFigurePerMoveString(moveString).checkMove(moveString, player, board.arr, this);
 					// Iterate red and black player when they have made a successful move
 					if (resultAfterMove == true) {
+						//board.getValideMoves(moveString,board.arr, getBoard(), player, this);
 						setNextPlayer(isRedNext() ? blackPlayer : redPlayer);
 						return resultAfterMove;
 					}

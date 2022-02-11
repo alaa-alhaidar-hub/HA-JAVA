@@ -234,28 +234,41 @@ public class ParsingString {
 
 	}
 
-	public HashMap<String, ArrayList<String>> getValideMoves(Figure[][] arr, String state, Player player, XiangqiGame xg) {
+	public HashMap<String, ArrayList<String>> getValideMoves(String moveString, Figure[][] arr, String state,
+			Player player, XiangqiGame xg) {
 		HashMap<String, ArrayList<String>> allowedMoves = new HashMap<String, ArrayList<String>>();
 		String move = "";
-//a0-b0
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 90; j++) {
-				move = "";
-				if (arr[i][j] != null) {
-					int xold = arr[i][j].position.getX();
-					int yold = arr[i][j].position.getY();
+		// a0-b0 i==y y Achse, j==x x Achse
 
-					move = move.concat(String.valueOf(xold + 97)).concat(String.valueOf(9 - yold)).concat("-")
-							.concat(String.valueOf(i + 97)).concat(String.valueOf(9 - j));
-					if (arr[i][j].checkMove(move, player, arr, xg)) {
-						ArrayList<String> l = getList(arr[i][j].name);
+		int xold = moveString.charAt(0) - 97;
+		int yold = 9 - Character.getNumericValue(moveString.charAt(1));
+
+		for (int i = 0; i < 10; i++) {
+
+			for (int j = 0; j < 9; j++) {
+				System.out.println(xg.board.arr[yold][xold]);
+				move = "";
+				if (xg.board.arr[yold][xold] == null) {
+
+					move = move.concat(Character.toString(moveString.charAt(0)).concat(String.valueOf(yold)))
+							.concat("-").concat(Character.toString((char) (i + 97))).concat(String.valueOf(j));
+					System.out.println(move);
+					if (xg.board.arr[yold][xold].checkMove(move, player, arr, xg)) {
+
+						System.out.println(xg.board.arr[yold][xold] + " " + (char) xg.board.arr[yold][xold].position.getX() + " "
+								+ (9 - xg.board.arr[yold][xold].position.getY()));
+
+						ArrayList<String> l = getList(xg.board.arr[yold][xold].name);
 						l.add(move);
-						allowedMoves.put(arr[i][j].name, l);
+						System.out.println(move);
+						allowedMoves.put(xg.board.arr[yold][xold].name, l);
+						System.out.println("hashmap  " + allowedMoves.keySet() + "  " + allowedMoves.values());
 
 					}
 
 				}
 			}
+
 		}
 
 		return allowedMoves;
@@ -285,7 +298,7 @@ public class ParsingString {
 		System.out.println("State bevor: " + xg2.getBoard());
 		System.out.println();
 		System.out.println("State after: " + xg2.updatedState(moveString));
-		System.out.println();
+		System.out.println(Character.toString((char) (0 + 97)));
 	}
 
 }
