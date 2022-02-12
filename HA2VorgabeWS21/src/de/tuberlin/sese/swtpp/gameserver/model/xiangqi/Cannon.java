@@ -1,8 +1,5 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
-import de.tuberlin.sese.swtpp.gameserver.model.Move;
-import de.tuberlin.sese.swtpp.gameserver.model.Player;
-
 public class Cannon extends Figure{
 	
 	/**
@@ -15,7 +12,7 @@ public class Cannon extends Figure{
 	}
 
 	@Override
-	public boolean checkMove(String moveString, Player player, Figure[][] board, XiangqiGame xg) {
+	public boolean checkMove(String moveString, Figure[][] board, XiangqiGame xg) {
 		Figure[][] arrCopy = board;
 		
 		// Starting position
@@ -25,12 +22,6 @@ public class Cannon extends Figure{
 		// Target position
 		int yold = 9 - Character.getNumericValue(moveString.charAt(1));
 		int ynew = 9 - Character.getNumericValue(moveString.charAt(4));
-
-		// If field or the color is not the same
-		if (arrCopy[yold][xold] == null) {
-			System.out.println("Field is empty.");
-			return false;
-		}
 		
 		// If the two positions are not empty then the color must be different
 		if ((arrCopy[ynew][xnew] != null && arrCopy[yold][xold] != null)
@@ -39,18 +30,24 @@ public class Cannon extends Figure{
 			return false;
 		}
 		
+		// Check if the figure is a Cannon
+		if (arrCopy[yold][xold].name != "c" && arrCopy[yold][xold].name != "C") {
+			System.out.println("Not a cannon.");
+			return false;
+		}
+		
 		// If correct player on turn
 		if (arrCopy[yold][xold].red && xg.isRedNext()) {
-			return isValidMove(moveString, player, board, xg);
+			return isValidMove(moveString, board);
 		} else if (!arrCopy[yold][xold].red && !xg.isRedNext()) {
-			return isValidMove(moveString, player, board, xg);
+			return isValidMove(moveString, board);
 		}
 		
 		return false;
 	}
 	
 	// Only one method for both colors, because functionality is not different
-	public boolean isValidMove(String moveString, Player player, Figure[][] board, XiangqiGame xg) {
+	public boolean isValidMove(String moveString, Figure[][] board) {
 		System.out.println("Method called.");
 		
 		// Starting position
@@ -67,11 +64,6 @@ public class Cannon extends Figure{
 
 		Figure[][] arrCopy = board;
 		
-		if (arrCopy[yold][xold].name != "c" && arrCopy[yold][xold].name != "C") {
-			System.out.println("Not a cannon.");
-			return false;
-		}
-		
 		///////////////////////////////////////////////////////////////////
 		
 		// Cases when cannon is only moving:
@@ -83,10 +75,6 @@ public class Cannon extends Figure{
 					return false;
 				}
 			}
-			// All the positions on the path are empty => move is valid.
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -98,10 +86,6 @@ public class Cannon extends Figure{
 					return false;
 				}
 			}
-			// All the positions on the path are empty => move is valid.
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -113,10 +97,6 @@ public class Cannon extends Figure{
 					return false;
 				}
 			}
-			// All the positions on the path are empty => move is valid.
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -128,10 +108,6 @@ public class Cannon extends Figure{
 					return false;
 				}
 			}
-			// All the positions on the path are empty => move is valid.
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -147,9 +123,6 @@ public class Cannon extends Figure{
 					countFigures++;
 				}
 				if (countFigures == 1) {
-					xg.updatedState(moveString);
-					xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-					player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 					return true;
 				}
 			}
@@ -164,9 +137,6 @@ public class Cannon extends Figure{
 					countFigures++;
 				}
 				if (countFigures == 1) {
-					xg.updatedState(moveString);
-					xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-					player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 					return true;
 				}
 			}
@@ -181,9 +151,6 @@ public class Cannon extends Figure{
 					countFigures++;
 				}
 				if (countFigures == 1) {
-					xg.updatedState(moveString);
-					xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-					player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 					return true;
 				}
 			}
@@ -198,22 +165,10 @@ public class Cannon extends Figure{
 					countFigures++;
 				}
 				if (countFigures == 1) {
-					xg.updatedState(moveString);
-					xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-					player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	// Must change the players turn in teh function at the start of the class!
-	/*public static void main(String[] args) {
-		XiangqiGame xg = new XiangqiGame();
-		System.out.println(xg.getBoard());
-		Cannon c = new Cannon(false, null, "C");
-		System.out.println(c.checkMove("e5-a5", null, xg.board.arr, xg));
-	}*/
-	
 }

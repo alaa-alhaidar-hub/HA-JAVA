@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 public class Position implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5482937570941095306L;
+
 	public Position(char x, int y) {
 		super();
 		this.x = x;

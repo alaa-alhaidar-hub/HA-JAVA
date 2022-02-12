@@ -1,9 +1,8 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
-import de.tuberlin.sese.swtpp.gameserver.model.Move;
-import de.tuberlin.sese.swtpp.gameserver.model.Player;
+import java.io.Serializable;
 
-public class Elephant extends Figure {
+public class Elephant extends Figure implements Serializable {
 
 	/**
 	 * 
@@ -15,7 +14,7 @@ public class Elephant extends Figure {
 	}
 
 	@Override
-	public boolean checkMove(String moveString, Player player, Figure[][] board, XiangqiGame xg) {
+	public boolean checkMove(String moveString, Figure[][] board, XiangqiGame xg) {
 		Figure[][] arrCopy = board;
 
 		// Starting position
@@ -25,12 +24,6 @@ public class Elephant extends Figure {
 		// Target position
 		int yold = 9 - Character.getNumericValue(moveString.charAt(1));
 		int ynew = 9 - Character.getNumericValue(moveString.charAt(4));
-
-		// If empty or the color is not the same
-		if (arrCopy[yold][xold] == null) {
-			System.out.println("Field is empty.");
-			return false;
-		}
 		
 		// If the two positions are not empty then the color must be different
 		if ((arrCopy[ynew][xnew] != null && arrCopy[yold][xold] != null)
@@ -39,17 +32,23 @@ public class Elephant extends Figure {
 			return false;
 		}
 		
+		// Check if the figure is an Elephant
+		if (arrCopy[yold][xold].name != "e" && arrCopy[yold][xold].name != "E") {
+			System.out.println("Not an elephant.");
+			return false;
+		}
+		
 		// If correct player on turn
 		if (arrCopy[yold][xold].red && xg.isRedNext()) {
-			return isvalidmoveRedFigure(moveString, player, board, xg);
+			return isvalidmoveRedFigure(moveString, board);
 		} else if (!arrCopy[yold][xold].red && !xg.isRedNext()) {
-			return isvalidmoveBlackFigure(moveString, player, board, xg);
+			return isvalidmoveBlackFigure(moveString, board);
 		}
 		
 		return false;
 	}
 	
-	public boolean isvalidmoveBlackFigure(String moveString, Player player, Figure[][] board, XiangqiGame xg) {
+	public boolean isvalidmoveBlackFigure(String moveString, Figure[][] board) {
 		System.out.println("Black method called.");
 		
 		// Starting position
@@ -66,20 +65,12 @@ public class Elephant extends Figure {
 
 		Figure[][] arrCopy = board;
 		
-		if (arrCopy[yold][xold].name != "e" && arrCopy[yold][xold].name != "E") {
-			System.out.println("Not an elephant.");
-			return false;
-		}
-		
 		// Edge case:
 		// If it is on the 9th row - it can move diagonally only down for y
 		// and left or right for x
 		if ((moveString.charAt(1) == '9') && (Math.abs(difx) == 2 && Math.abs(dify) == 2) 
 				&& 
 				(arrCopy[yold + 1][xold + 1] == null || (arrCopy[yold + 1][xold - 1] == null))) {
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -88,9 +79,6 @@ public class Elephant extends Figure {
 				(Math.abs(difx) == 2 && Math.abs(dify) == 2) 
 				&& 
 				((arrCopy[yold - 1][xold + 1] == null) || (arrCopy[yold + 1][xold + 1] == null))) {
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -99,9 +87,6 @@ public class Elephant extends Figure {
 				(Math.abs(difx) == 2 && Math.abs(dify) == 1) 
 				&& 
 				((arrCopy[yold - 1][xold - 1] == null) || (arrCopy[yold + 1][xold - 1] == null))) {
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -110,9 +95,6 @@ public class Elephant extends Figure {
 		// Check if the first field is empty!
 		if ((Math.abs(difx) == 2 && Math.abs(dify) == 2) && 
 				(arrCopy[yold + 1][xold + 1] == null || arrCopy[yold - 1][xold - 1] == null)) {
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -124,7 +106,7 @@ public class Elephant extends Figure {
 		return false;
 	}
 	
-	public boolean isvalidmoveRedFigure(String moveString, Player player, Figure[][] board, XiangqiGame xg) {
+	public boolean isvalidmoveRedFigure(String moveString, Figure[][] board) {
 		System.out.println("Red method called.");
 		
 		// Starting position
@@ -152,9 +134,6 @@ public class Elephant extends Figure {
 		if ((moveString.charAt(1) == '0') && (Math.abs(difx) == 2 && Math.abs(dify) == 2) 
 				&& 
 				(arrCopy[yold - 1][xold + 1] == null || (arrCopy[yold - 1][xold - 1] == null))) {
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -163,9 +142,6 @@ public class Elephant extends Figure {
 				(Math.abs(difx) == 2 && Math.abs(dify) == 2) 
 				&& 
 				((arrCopy[yold - 1][xold + 1] == null) || (arrCopy[yold + 1][xold + 1] == null))) {
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -174,9 +150,6 @@ public class Elephant extends Figure {
 				(Math.abs(difx) == 2 && Math.abs(dify) == 1) 
 				&& 
 				((arrCopy[yold - 1][xold - 1] == null) || (arrCopy[yold + 1][xold - 1] == null))) {
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -185,9 +158,6 @@ public class Elephant extends Figure {
 		// Check if the first field is empty!
 		if ((Math.abs(difx) == 2 && Math.abs(dify) == 2) && 
 				(arrCopy[yold + 1][xold + 1] == null || arrCopy[yold - 1][xold - 1] == null)) {
-			xg.updatedState(moveString);
-			xg.board.updateArrayPerMoveString(moveString, xg.getBoard(), xg.board.arr);
-			player.getGame().getHistory().add(new Move(moveString, xg.getBoard(), player));
 			return true;
 		}
 		
@@ -198,12 +168,4 @@ public class Elephant extends Figure {
 		
 		return false;
 	}
-	
-	public static void main(String[] args) {
-		XiangqiGame xg = new XiangqiGame();
-		System.out.println(xg.getBoard());
-		Elephant e = new Elephant(true, null, "E");
-		System.out.println(e.checkMove("f3-d5", null, xg.board.arr, xg));
-	}
-	
 }

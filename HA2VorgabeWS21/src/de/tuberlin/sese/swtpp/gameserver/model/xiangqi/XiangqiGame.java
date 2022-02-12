@@ -1,10 +1,10 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
+import de.tuberlin.sese.swtpp.gameserver.control.GameController;
 import de.tuberlin.sese.swtpp.gameserver.model.*;
 //TODO: more imports from JVM allowed here
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 
 public class XiangqiGame extends Game implements Serializable {
@@ -20,7 +20,7 @@ public class XiangqiGame extends Game implements Serializable {
 	//ParsingString ps = new ParsingString();
 	// just for better comprehensibility of the code: assign red and black player
 	private Player blackPlayer;
-	private Player redPlayer;
+	private static Player redPlayer;
 	
 	
 	// internal representation of the game state
@@ -220,14 +220,10 @@ public class XiangqiGame extends Game implements Serializable {
 	@Override
 	public String getBoard() {
 		// TODO: implement
-		
 		if (board == null) {
 			return ""; 
 		}
-		
-		//System.out.println("This is the getBoard reprsentation: " + board.createBoardStringFrom2D());
 		return board.createBoardStringFrom2D();
-
 	}
 	
 	public String updatedState(String moveString) {
@@ -247,10 +243,10 @@ public class XiangqiGame extends Game implements Serializable {
 		String from = sArr[a]; // char from this field
 		String to = sArr[b]; // to this field
 
-		char[] carr2 = (from.toCharArray()); // Zeile as an array -> 0 spalte c
-		char[] carr = (to.toCharArray()); // Zeile as an array -> 1 spalte d
+		char[] carr2 = (from.toCharArray()); // Row as an array -> 0 column c
+		char[] carr = (to.toCharArray()); // Row as an array -> 1 column d
 		
-		carr[(int) moveString.charAt(3) - 97] = carr2[(int) moveString.charAt(0) - 97];// replace the position bei old																						// one
+		carr[(int) moveString.charAt(3) - 97] = carr2[(int) moveString.charAt(0) - 97]; // replace the position for the old																						// one
 		carr2[(int) moveString.charAt(0) - 97] = 'x'; // old one is null
 
 		String f = "";
@@ -284,11 +280,53 @@ public class XiangqiGame extends Game implements Serializable {
 	public boolean isKingChecked() {
 		return false;
 	}
+	
+	// Count the valid moves a player has, 
+	// if there are none (a.k.a counter = 0), the player loses the game
+	public int numberValidMoves(Figure figure, char currX, int currY) {
+		int counter = 0;
+		char currentX = currX;
+		char currentY = (char) ('0' + currY);
+		
+		for (int i = 0;  i < 10; i++) {
+			for (int j = 0; j < 9; j++) {
+				char targetX = (char) (j + 97);
+				System.out.println("This is the targetX: " + targetX);
+				char targetY = (char) ('0' + (9 - i));
+				System.out.println("This is the targetY: " + targetY);
+				String makeMoveString = "" + currentX + currentY + '-' + targetX + targetY;
+				System.out.println("This is the move string: " + makeMoveString);
+				if (figure.checkMove(makeMoveString, board.arr, this)) {
+					counter = counter + 1;
+				}
+			}
+		}
+		return counter;
+	}
+	
+	// If the number of valid moves is > 0, the player is allowed to make a move
+	public boolean hasValidMoves(Player player) {
+		
+		boolean playersColor = (player == redPlayer) ? true : false;		
+		
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 9; j++) {
+				if (board.arr[i][j] != null) {
+					Figure figure = board.arr[i][j];
+					char positionX = board.arr[i][j].position.x;
+					int positionY = board.arr[i][j].position.y;
+					if (board.arr[i][j].red == playersColor && (numberValidMoves(figure, positionX, positionY) != 0)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean tryMove(String moveString, Player player) {
 		// TODO: implement
-		Game g = player.getGame();
 		
 		// Is the state after the move possible
 		Boolean resultAfterMove;
@@ -298,42 +336,57 @@ public class XiangqiGame extends Game implements Serializable {
 			return false;
 		}
 		
-		List<Player> players = g.getPlayers();
+		List<Player> players = this.getPlayers();
 		for (Player p : players) {
 			if (p == player) {
-				if (!player.isGameInvalid() && !g.isFinished() && g.isStarted()) {
+				if (!player.isGameInvalid() && !this.isFinished() && this.isStarted()) {
 					System.out.println("Figure to call his check methode: " + board.getFigurePerMoveString(moveString));
 					
-					resultAfterMove =  board.getFigurePerMoveString(moveString).checkMove(moveString, player, board.arr, this);
-					// Iterate red and black player when they have made a successful move
+					// If the player on turn has no valid moves
+					if (hasValidMoves(player) == false) {
+						if (player == redPlayer) {
+							regularGameEnd(blackPlayer);
+						}
+						else {
+							regularGameEnd(redPlayer);
+						}
+						
+						System.out.println("Player has no valid moves.");
+						return false;
+					}
+					
+					// If the player has valid moves, check if this move is a valid one 
+					// and if yes, make the move
+					resultAfterMove =  board.getFigurePerMoveString(moveString).checkMove(moveString, board.arr, this);
+					
 					if (resultAfterMove == true) {
-						//board.getValideMoves(moveString,board.arr, getBoard(), player, this);
+						
+						updatedState(moveString);
+						board.updateArrayPerMoveString(moveString, this.getBoard(), board.arr);
+						player.getGame().getHistory().add(new Move(moveString, this.getBoard(), player));
+						
+						// Iterate red and black player when they have made a successful move
 						setNextPlayer(isRedNext() ? blackPlayer : redPlayer);
+						
 						return resultAfterMove;
 					}
 					else {
+						
 						return resultAfterMove;
+						
 					}
 				}
 			}
 		}
 		return false;
 	}
-
+	
 	public static void main(String[] args) {
-		XiangqiGame xg = new XiangqiGame();
-		String moveString = "a0-a1";
-		//System.out.println();
-		//System.out.println("State bevor: " + xg.getBoard());
-		//System.out.println();
-		//System.out.println("State after: " + xg.updatedState(moveString));
-		//System.out.println();
-		//General g = new General(false, null, "g");
-		//System.out.println();
-		System.out.println(xg.getBoard());
-		//System.out.println(g.checkMove("e0-d0", null, xg.board.arr, xg));
-		xg.updatedState(moveString);
-		//System.out.println(xg.getBoard());
+		//XiangqiGame xg = new XiangqiGame();
+		//String moveString = "b2-b4";
+		//User user1 = new User("Alice", "alice");
+		
+		//xg.tryMove(moveString, redPlayer);
+		
 	}
-
 }

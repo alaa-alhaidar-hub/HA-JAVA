@@ -2,9 +2,11 @@ package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
 import java.io.Serializable;
 
-import de.tuberlin.sese.swtpp.gameserver.model.Player;
-
 public abstract class Figure implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8218913367653870892L;
 	boolean red = false;
 	Position position;
 	String name;
@@ -16,14 +18,6 @@ public abstract class Figure implements Serializable {
 		this.name = name;
 	}
 
-	public abstract boolean checkMove(String moveString, Player player, Figure[][] board, XiangqiGame xg);
-
-	@Override
-	public String toString() {
-		String farbe="";
-		if(red) {farbe="red";}else farbe="black";
-
-		return "["+ name + "]";
-	}
-
+	public abstract boolean checkMove(String moveString, Figure[][] board, XiangqiGame xg);
+	
 }

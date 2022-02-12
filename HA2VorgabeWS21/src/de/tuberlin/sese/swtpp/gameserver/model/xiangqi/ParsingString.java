@@ -1,30 +1,29 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.Serializable;
 
-import de.tuberlin.sese.swtpp.gameserver.model.Player;
-
-public class ParsingString {
-
+public class ParsingString implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -268967919404280946L;
 	// This is the game board
 	public Figure[][] arr;
-
+	
 	// A constructor to create the array (a.k.a) the board
 	public ParsingString() {
 		this.arr = new Figure[10][9];
 	}
-
-	// Static method to create the board when the function setBoard() is called from
-	// the game
+	
+	// Static method to create the board when the function setBoard() is called from the game
 	public static ParsingString fromRepresentation(String representation) {
-		ParsingString newBoard = new ParsingString();
+		ParsingString newBoard = new ParsingString(); 
 		newBoard.create2D(representation);
 		return newBoard;
 	}
 
-	// This is a void method which does not return an array, but sets the figures on
-	// the
+	// This is a void method which does not return an array, but sets the figures on the 
 	// already constructed array (arr from the ParsingString constructor)
 	public void create2D(String gameState) {
 		String s = formatString(gameState);
@@ -44,18 +43,18 @@ public class ParsingString {
 
 	// A function to create a new figure from its character representation
 	public Figure getFigure(char s) {
-
+		
 		if (s == 'x') {
 			return null;
 		}
-
+		
 		else {
 			Figure figure = FigureFactory.createFigure(s);
 			return figure;
 		}
 	}
 
-	// A function that returns the figure that is on
+	// A function that returns the figure that is on 
 	// this board position
 	public Figure getFigurePerMoveString(String moveString) {
 		int xold = moveString.charAt(0) - 97;
@@ -73,21 +72,20 @@ public class ParsingString {
 		arr[yold][xold] = null;
 		return arr;
 	}
-
-	// To be used for the getBoard() function in the game class for creating
+	
+	// To be used for the getBoard() function in the game class for creating 
 	// a string representation of the current state of the board
-	public String createBoardStringFrom2D() {
+	public String createBoardStringFrom2D() {		
 		String currentState = "";
 		String figureRepresentation;
-
-		for (int y = 0; y < 10; y++) {
-			for (int x = 0; x < 9; x++) {
+		
+		for(int y = 0; y < 10; y++) {
+			for(int x = 0; x < 9; x++) {
 				// If the current board position is empty, add X to the state representation
 				if (arr[y][x] == null) {
 					currentState = currentState + "x";
 				}
-				// If there is a figure, add the figure representation to the state
-				// representation
+				// If there is a figure, add the figure representation to the state representation
 				else {
 					figureRepresentation = arr[y][x].name;
 					currentState = currentState + figureRepresentation;
@@ -98,40 +96,42 @@ public class ParsingString {
 				currentState = currentState + "/";
 			}
 		}
-
+		
 		// Add the "/", because it is needed so that the transformation under works
 		currentState = currentState.concat("/");
-
+		
 		System.out.println("This is the current state " + currentState);
-
-		// count all the "x" from the string representation
+		
+		// count all the "x" from the string representation 
 		// and add their count to the final string representation, instead of the Xs
 		StringBuilder output = new StringBuilder();
 		int count = 0;
 		for (int i = 0; i < currentState.length(); i++) {
-			if (currentState.charAt(i) == "x".charAt(0)) {
+			if (currentState.charAt(i) == "x".charAt(0)) { 
 				count++;
-			} else {
+			} 
+			else  {
 				if (count != 0) {
-					output.append(count);
-					output.append(currentState.charAt(i));
-					count = 0;
-				} else {
-					output.append(currentState.charAt(i));
+					output.append(count); 
+					output.append(currentState.charAt(i));  
+					count = 0;    
 				}
+				else {
+					output.append(currentState.charAt(i));  
+				} 
 			}
 		}
-
+		
 		// Remove the last "/"
-		// String result = output.substring(0, output.toString().length() - 1);
-		// System.out.println("This is the transformed state: " + result);
+		//String result = output.substring(0, output.toString().length() - 1);
+		//System.out.println("This is the transformed state: " + result);
 		return output.substring(0, output.toString().length() - 1);
 
 	}
 
 	///////////////////////// HELPER FUNCTIONS //////////////////////
-
-	// A function to replace integers in the string with the
+	
+	// A function to replace integers in the string with the 
 	// according number of "x"
 	public String formatString(String b) {
 
@@ -148,7 +148,7 @@ public class ParsingString {
 		f8 = f7.replaceAll("9", "xxxxxxxxx");
 		return f8;
 	}
-
+	
 	// A function to count the "x" in the string
 	public String countNull(String str) {
 		if (str.contains("xxxxxxxxx")) {
@@ -180,101 +180,7 @@ public class ParsingString {
 		}
 		return str;
 	}
-
-	public ArrayList<String> getList(String name) {
-
-		ArrayList<String> generalListB = new ArrayList<String>();
-		ArrayList<String> generalListR = new ArrayList<String>();
-		ArrayList<String> advisorListB = new ArrayList<String>();
-		ArrayList<String> advisorListR = new ArrayList<String>();
-		ArrayList<String> horseListB = new ArrayList<String>();
-		ArrayList<String> horseListR = new ArrayList<String>();
-		ArrayList<String> elephantListB = new ArrayList<String>();
-		ArrayList<String> elephantListR = new ArrayList<String>();
-		ArrayList<String> rockListB = new ArrayList<String>();
-		ArrayList<String> rockListR = new ArrayList<String>();
-		ArrayList<String> soldierListB = new ArrayList<String>();
-		ArrayList<String> soldierListR = new ArrayList<String>();
-		ArrayList<String> cannonListB = new ArrayList<String>();
-		ArrayList<String> cannonListR = new ArrayList<String>();
-
-		switch (name) {
-		case "g":
-			return generalListB;
-		case "G":
-			return generalListR;
-		case "a":
-			return advisorListB;
-		case "A":
-			return advisorListR;
-		case "c":
-			return cannonListB;
-		case "C":
-			return cannonListR;
-		case "h":
-			return horseListB;
-		case "H":
-			return horseListR;
-		case "e":
-			return elephantListB;
-		case "E":
-			return elephantListR;
-		case "s":
-			return soldierListB;
-		case "S":
-			return soldierListR;
-		case "r":
-			return rockListB;
-		case "R":
-			return rockListR;
-
-		}
-
-		return null;
-
-	}
-
-	public HashMap<String, ArrayList<String>> getValideMoves(String moveString, Figure[][] arr, String state,
-			Player player, XiangqiGame xg) {
-		HashMap<String, ArrayList<String>> allowedMoves = new HashMap<String, ArrayList<String>>();
-		String move = "";
-		// a0-b0 i==y y Achse, j==x x Achse
-
-		int xold = moveString.charAt(0) - 97;
-		int yold = 9 - Character.getNumericValue(moveString.charAt(1));
-
-		for (int i = 0; i < 10; i++) {
-
-			for (int j = 0; j < 9; j++) {
-				System.out.println(xg.board.arr[yold][xold]);
-				move = "";
-				if (xg.board.arr[yold][xold] == null) {
-
-					move = move.concat(Character.toString(moveString.charAt(0)).concat(String.valueOf(yold)))
-							.concat("-").concat(Character.toString((char) (i + 97))).concat(String.valueOf(j));
-					System.out.println(move);
-					if (xg.board.arr[yold][xold].checkMove(move, player, arr, xg)) {
-
-						System.out.println(xg.board.arr[yold][xold] + " " + (char) xg.board.arr[yold][xold].position.getX() + " "
-								+ (9 - xg.board.arr[yold][xold].position.getY()));
-
-						ArrayList<String> l = getList(xg.board.arr[yold][xold].name);
-						l.add(move);
-						System.out.println(move);
-						allowedMoves.put(xg.board.arr[yold][xold].name, l);
-						System.out.println("hashmap  " + allowedMoves.keySet() + "  " + allowedMoves.values());
-
-					}
-
-				}
-			}
-
-		}
-
-		return allowedMoves;
-
-	}
-
+	
 	// A function to visualize the string state as an array
 	public void parr(Figure[][] a2d) {
 		for (int i = 0; i < 10; i++) {
@@ -289,16 +195,18 @@ public class ParsingString {
 		}
 	}
 
+	
+
 	public static void main(String[] args) {
 		XiangqiGame xg2 = new XiangqiGame();
-		// ParsingString ps = new ParsingString();
+		//ParsingString ps = new ParsingString();
 		System.out.println(xg2.getBoard());
 		String moveString = "e1-d0";
 		System.out.println();
 		System.out.println("State bevor: " + xg2.getBoard());
 		System.out.println();
 		System.out.println("State after: " + xg2.updatedState(moveString));
-		System.out.println(Character.toString((char) (0 + 97)));
+		System.out.println();
 	}
 
 }

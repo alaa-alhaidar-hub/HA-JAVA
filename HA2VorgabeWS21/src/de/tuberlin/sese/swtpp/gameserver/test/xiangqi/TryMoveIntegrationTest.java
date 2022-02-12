@@ -177,7 +177,7 @@ public class TryMoveIntegrationTest {
 	@Test
 	public void generalTest1() {
 		startGame("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", false);
-		assertMove("e8-e9", true, true);
+		assertMove("e8-e9", false, true);
 		assertGameState("rheaga1h1/9/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", true, false, false);
 	}
 
