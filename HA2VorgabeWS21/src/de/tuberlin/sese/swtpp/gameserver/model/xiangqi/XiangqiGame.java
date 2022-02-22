@@ -1,11 +1,12 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
 
-import de.tuberlin.sese.swtpp.gameserver.control.GameController;
 import de.tuberlin.sese.swtpp.gameserver.model.*;
+import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure.IFigure;
+import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure.FigureColor;
 //TODO: more imports from JVM allowed here
 
 import java.io.Serializable;
-import java.util.List;
+
 
 public class XiangqiGame extends Game implements Serializable {
 
@@ -20,13 +21,13 @@ public class XiangqiGame extends Game implements Serializable {
 	//ParsingString ps = new ParsingString();
 	// just for better comprehensibility of the code: assign red and black player
 	private Player blackPlayer;
-	private static Player redPlayer;
+	private Player redPlayer;
 	
 	
 	// internal representation of the game state
 	// TODO: insert additional game data here
 	public String state;
-	public ParsingString board;
+	public Board board;
 
 	/************************
 	 * constructors
@@ -35,7 +36,6 @@ public class XiangqiGame extends Game implements Serializable {
 	public XiangqiGame() {
 		super();
 		// TODO: initialization of game state can go here
-		//state = "rheagaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEAGAEHR";
 		state = "rheagaehr/9/1c5c1/s1s1s1s1s/9/4H4/S1S1S1S1S/1C5C1/9/RHEAGAE2";
 		setBoard(state);
 	}
@@ -209,184 +209,108 @@ public class XiangqiGame extends Game implements Serializable {
 
 	@Override
     public void setBoard(String state) {
-        // Note: This method is for automatic testing. A regular game would not start at
-        // some artificial state.
-        // It can be assumed that the state supplied is a regular board that can be
-        // reached during a game.
-        // TODO: implement
-		board = ParsingString.fromRepresentation(state);
+        // Note: This method is for automatic testing. A regular game would not start at some artificial state.
+		// It can be assumed that the state supplied is a regular board that can be reached during a game.
+		board = Board.fromRepresentation(state);
     }
 
 	@Override
 	public String getBoard() {
-		// TODO: implement
 		if (board == null) {
-			return ""; 
+			return "";
 		}
-		return board.createBoardStringFrom2D();
+		return board.getCurrentBoardStateInStringRepresentation();
 	}
-	
-	public String updatedState(String moveString) {
 
-		// Get the board state until now
-		String oldState = getBoard();
-		
-		System.out.println("This is the old state: " + oldState);
-		
-		// Re-formating the string, check the method in ParsingString class
-		String s = board.formatString(oldState);
-		String[] sArr = s.split("/", 10);
-
-		int a = 9 - Character.getNumericValue(moveString.charAt(1));
-		int b = 9 - Character.getNumericValue(moveString.charAt(4));
-
-		String from = sArr[a]; // char from this field
-		String to = sArr[b]; // to this field
-
-		char[] carr2 = (from.toCharArray()); // Row as an array -> 0 column c
-		char[] carr = (to.toCharArray()); // Row as an array -> 1 column d
-		
-		carr[(int) moveString.charAt(3) - 97] = carr2[(int) moveString.charAt(0) - 97]; // replace the position for the old																						// one
-		carr2[(int) moveString.charAt(0) - 97] = 'x'; // old one is null
-
-		String f = "";
-		String f1 = "";
-		
-		// Transform the character array "from - to" again to a string
-		for (int i = 0; i < carr.length; i++) {
-			f = f.concat(String.valueOf(carr[i]));
-			f1 = f1.concat(String.valueOf(carr2[i]));
-		}
-		
-		// Join the split array fields together as a string
-		StringBuffer newState = new StringBuffer();
-		for (int i = 0; i < sArr.length; i++) {
-			if (i == a) {
-				sArr[i] = f1;
-			} else if (i == b) {
-				sArr[i] = f;
-			}
-			if (i == 9) {
-				newState.append(sArr[i]);
-				break;
-			}
-			newState = newState.append(sArr[i]).append("/");
-		}
-
-		System.out.println("This is the new state " + board.countNull(newState.toString()));
-		return board.countNull(newState.toString());
+	public Position getStartPosition(String moveString) {
+		String[] moveStringPositions = moveString.split("-");
+		return new Position(moveStringPositions[0]);
 	}
-	
-	public boolean isKingChecked() {
-		return false;
-	}
-	
-	// Count the valid moves a player has, 
-	// if there are none (a.k.a counter = 0), the player loses the game
-	public int numberValidMoves(Figure figure, char currX, int currY) {
-		int counter = 0;
-		char currentX = currX;
-		char currentY = (char) ('0' + currY);
-		
-		for (int i = 0;  i < 10; i++) {
-			for (int j = 0; j < 9; j++) {
-				char targetX = (char) (j + 97);
-				System.out.println("This is the targetX: " + targetX);
-				char targetY = (char) ('0' + (9 - i));
-				System.out.println("This is the targetY: " + targetY);
-				String makeMoveString = "" + currentX + currentY + '-' + targetX + targetY;
-				System.out.println("This is the move string: " + makeMoveString);
-				if (figure.checkMove(makeMoveString, board.arr, this)) {
-					counter = counter + 1;
-				}
-			}
-		}
-		return counter;
-	}
-	
-	// If the number of valid moves is > 0, the player is allowed to make a move
-	public boolean hasValidMoves(Player player) {
-		
-		boolean playersColor = (player == redPlayer) ? true : false;		
-		
-		for(int i = 0; i < 10; i++) {
-			for(int j = 0; j < 9; j++) {
-				if (board.arr[i][j] != null) {
-					Figure figure = board.arr[i][j];
-					char positionX = board.arr[i][j].position.x;
-					int positionY = board.arr[i][j].position.y;
-					if (board.arr[i][j].red == playersColor && (numberValidMoves(figure, positionX, positionY) != 0)) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
+
+	public Position getTargetPosition(String moveString) {
+		String[] moveStringPositions = moveString.split("-");
+		return new Position(moveStringPositions[1]);
 	}
 
 	@Override
 	public boolean tryMove(String moveString, Player player) {
-		// TODO: implement
-		
-		// Is the state after the move possible
-		Boolean resultAfterMove;
-		
-		// No figure on the starting position
-		if (board.getFigurePerMoveString(moveString) == null) {
+		Position startPosition = getStartPosition(moveString);
+		Position targetPosition = getTargetPosition(moveString);
+
+		IFigure figureAtStart = board.figureAt(startPosition);
+		IFigure figureAtTarget = board.figureAt(targetPosition);
+
+		FigureColor playerColor = player == redPlayer ? FigureColor.RED : FigureColor.BLACK;
+
+		// If the current game is not valid or is finished, or has not started, the move cannot be made.
+//		if (player.isGameInvalid() || this.isFinished() || !this.isStarted() || this.error) {
+//			return false;
+//		}
+
+		// If there is no figure on the starting position, the move is not valid.
+		if (figureAtStart == null) {
 			return false;
 		}
-		
-		List<Player> players = this.getPlayers();
-		for (Player p : players) {
-			if (p == player) {
-				if (!player.isGameInvalid() && !this.isFinished() && this.isStarted()) {
-					System.out.println("Figure to call his check methode: " + board.getFigurePerMoveString(moveString));
-					
-					// If the player on turn has no valid moves
-					if (hasValidMoves(player) == false) {
-						if (player == redPlayer) {
-							regularGameEnd(blackPlayer);
-						}
-						else {
-							regularGameEnd(redPlayer);
-						}
-						
-						System.out.println("Player has no valid moves.");
-						return false;
-					}
-					
-					// If the player has valid moves, check if this move is a valid one 
-					// and if yes, make the move
-					resultAfterMove =  board.getFigurePerMoveString(moveString).checkMove(moveString, board.arr, this);
-					
-					if (resultAfterMove == true) {
-						
-						updatedState(moveString);
-						board.updateArrayPerMoveString(moveString, this.getBoard(), board.arr);
-						player.getGame().getHistory().add(new Move(moveString, this.getBoard(), player));
-						
-						// Iterate red and black player when they have made a successful move
-						setNextPlayer(isRedNext() ? blackPlayer : redPlayer);
-						
-						return resultAfterMove;
-					}
-					else {
-						
-						return resultAfterMove;
-						
-					}
-				}
+
+		if (figureAtStart.getColor() != playerColor) {
+			return false;
+		}
+
+		if (figureAtStart.getColor() == FigureColor.RED && player == redPlayer) {
+			if (!board.hasValidMoves(FigureColor.RED)) {
+				regularGameEnd(blackPlayer);
+				return false;
 			}
 		}
-		return false;
-	}
-	
-	public static void main(String[] args) {
-		//XiangqiGame xg = new XiangqiGame();
-		//String moveString = "b2-b4";
-		//User user1 = new User("Alice", "alice");
-		
-		//xg.tryMove(moveString, redPlayer);
-		
+		else if (figureAtStart.getColor() == FigureColor.BLACK && player == blackPlayer) {
+			if (!board.hasValidMoves(FigureColor.BLACK)){
+				regularGameEnd(redPlayer);
+				return false;
+			}
+		}
+
+		if (!board.isValidFigureMove(figureAtStart, startPosition, targetPosition)) {
+			return false;
+		}
+
+		// TODO: implement when the player's figure is going to take the general
+//		if (board.figureAt(targetPosition) != null) {
+//			if (board.isValidFigureMove(figureAtStart, startPosition, targetPosition)
+//					&& figureAtTarget.getCharacterRepresentation().equals("G") && player == blackPlayer) {
+//				regularGameEnd(redPlayer);
+//				return true;
+//			}
+//
+//			if (board.isValidFigureMove(figureAtStart, startPosition, targetPosition)
+//					&& figureAtTarget.getCharacterRepresentation().equals("g") && player == redPlayer) {
+//				regularGameEnd(blackPlayer);
+//				return true;
+//			}
+//		}
+
+		board.removeFigure(figureAtTarget);
+		board.moveFigure(figureAtStart, targetPosition);
+
+		Move currentMove = new Move(moveString, this.getBoard(), player);
+		history.add(currentMove);
+		setHistory(history);
+
+		if (figureAtStart.getColor() == FigureColor.RED && player == redPlayer) {
+			if (!board.hasValidMoves(FigureColor.BLACK)) {
+				regularGameEnd(redPlayer);
+				return true;
+			}
+		}
+
+		else if (figureAtStart.getColor() == FigureColor.BLACK && player == blackPlayer) {
+			if (!board.hasValidMoves(FigureColor.RED)) {
+				regularGameEnd(blackPlayer);
+				return true;
+			}
+		}
+
+		setNextPlayer(isRedNext() ? blackPlayer : redPlayer);
+
+		return true;
 	}
 }

@@ -144,7 +144,7 @@ public final class XiangqiGameTest {
 	public void testNextPlayerString() {
 		startGame();
 		
-		assertEquals("w", game.nextPlayerString());
+		assertEquals("r", game.nextPlayerString());
 		
 		game.setNextPlayer(blackPlayer);
 		
