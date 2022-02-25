@@ -1,15 +1,10 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure;
-
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.Position;
-import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.XiangqiGame;
-
+import java.io.Serializable;
 import java.util.function.Predicate;
 
-public class Horse extends _BaseFigure {
-	
-	/**
-	 * 
-	 */
+public class Horse extends _BaseFigure implements Serializable {
+
 	private static final long serialVersionUID = 8926665404590043762L;
 
 	@Override
@@ -46,5 +41,5 @@ public class Horse extends _BaseFigure {
 			return isFree.test(new Position(0, (int) Math.signum(deltaPosition.y)));
 		}
 	}
-	
+
 }

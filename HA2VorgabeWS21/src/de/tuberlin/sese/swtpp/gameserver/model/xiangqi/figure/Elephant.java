@@ -1,8 +1,5 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure;
-
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.Position;
-import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.XiangqiGame;
-
 import java.io.Serializable;
 import java.util.function.Predicate;
 
@@ -17,10 +14,10 @@ public class Elephant extends _BaseFigure implements Serializable {
 
 	@Override
 	public boolean isValidMoveDelta(Position deltaPosition, Predicate<Position> isFree) {
-		return Math.abs(deltaPosition.x) == 2
+		return !this.hasCrossedRiver()
+				&& Math.abs(deltaPosition.x) == 2
 				&& Math.abs(deltaPosition.y) == 2
-				&& !this.wouldCrossRiverWithMove(deltaPosition)
-				&& !this.hasCrossedRiver();
+				&& !this.wouldCrossRiverWithMove(deltaPosition);
 	}
 
 }

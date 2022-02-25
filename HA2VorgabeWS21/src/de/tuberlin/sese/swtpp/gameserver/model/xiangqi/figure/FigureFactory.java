@@ -1,8 +1,10 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure;
-
 import java.io.Serializable;
 
-public abstract class FigureFactory implements Serializable {
+public class FigureFactory implements Serializable {
+	private FigureFactory() {
+
+	}
 
 	private static final long serialVersionUID = -5252369819361557429L;
 
@@ -42,4 +44,5 @@ public abstract class FigureFactory implements Serializable {
 
 		return null;
 	}
+
 }

@@ -1,10 +1,8 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
-
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.exceptions.DeadGeneralException;
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure.FigureColor;
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure.FigureFactory;
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure.IFigure;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -39,8 +37,6 @@ public class Board implements Serializable {
 				if (newFigure != null) {
 					addFigure(newFigure, new Position(x, y));
 				}
-
-				// TODO: if a general, store figure somewhere
 			}
 		}
 	}
@@ -109,11 +105,6 @@ public class Board implements Serializable {
 		if (figure == null) {
 			return;
 		}
-
-		if (!this.figures.contains(figure)) {
-			throw new RuntimeException("Removing a figure that doesn't exist!");
-		}
-
 		Position figurePosition = figure.getPosition();
 		this.boardMatrix[figurePosition.x][figurePosition.y] = null;
 		this.figures.remove(figure);
@@ -124,18 +115,10 @@ public class Board implements Serializable {
 	}
 
 	public void moveFigure(IFigure figure, Position position) {
-		if (this.boardMatrix[position.x][position.y] != null) {
-			throw new RuntimeException("Cannot move figure, position occupied!");
-		}
-
 		Position initialPosition = figure.getPosition();
 		this.boardMatrix[initialPosition.x][initialPosition.y] = null;
 		this.boardMatrix[position.x][position.y] = figure;
 		figure.setPosition(position);
-	}
-
-	public List<IFigure> getFigures() {
-		return Collections.unmodifiableList(this.figures);
 	}
 
 	private boolean isFree(Position position) {
@@ -243,7 +226,6 @@ public class Board implements Serializable {
 		int rowBetweenGenerals = redGeneralRow;
 		int numberOfFiguresBetweenGenerals = 0;
 
-		// If one of the Generals is not on Board or is their column coordinates are different
 		if ((getBlackGeneralPosition().x != getRedGeneralPosition().x)) {
 			return false;
 		}
@@ -263,7 +245,6 @@ public class Board implements Serializable {
 	// A function to replace integers in the string with the 
 	// according number of "x"
 	public String formatString(String b) {
-
 		String f, f1, f2, f3, f4, f5, f6, f7, f8 = "";
 
 		f = b.replaceAll("1", "x");
@@ -277,4 +258,5 @@ public class Board implements Serializable {
 		f8 = f7.replaceAll("9", "xxxxxxxxx");
 		return f8;
 	}
+
 }

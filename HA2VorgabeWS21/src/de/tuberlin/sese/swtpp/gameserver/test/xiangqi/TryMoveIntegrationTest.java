@@ -220,6 +220,21 @@ public class TryMoveIntegrationTest {
 		assertGameState("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/9/1HEAGAEHR", false, false, false);
 	}
 
+	// Red Advisor can make a diagonal step from the Palace center to the lower right corner of the Palace.
+	@Test
+	public void redAdvisorMakesOneDiagonalStepFromPalaceCenterToLowerRightCorner() {
+		startGame("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1G1EHR", true);
+		assertMove("e1-f0", true, true);
+		assertGameState("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/9/1HE1GAEHR", false, false, false);
+	}
+
+	@Test
+	public void redAdvisorMakesOneDiagonalStepFromLowerRightCornerToPalaceCenter() {
+		startGame("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/9/1HE1GAEHR", true);
+		assertMove("f0-e1", true, true);
+		assertGameState("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1G1EHR", false, false, false);
+	}
+
 	// Red Advisor cannot cross the river.
 	@Test
 	public void redAdvisorIsCrossingTheRiver() {
@@ -237,35 +252,22 @@ public class TryMoveIntegrationTest {
 	}
 
 	// Red Advisor cannot cross the river!
+	// Same explanation as below.
 	@Test
 	public void redAdvisorCannotCrossTheRiver() {
 		startGame("3AG4/9/9/9/9/9/9/9/9/3ga4", true);
 		assertMove("d9-d3", true, false);
-		assertGameState("3AG4/9/9/9/9/9/9/9/9/3ga4", true, true, false);
+		assertGameState("3AG4/9/9/9/9/9/9/9/9/3ga4", true, false, false);
 	}
 
 	// Red Advisor cannot go outside of the palace.
+	// It is not a valid situation in a real game I think, it is not finished, because both player can infinitelly move
+	// the figures back and forth without anything happening in the game.
 	@Test
 	public void redAdvisorCannotGoOutsideThePalaceA() {
-		startGame("3AG4/9/9/9/9/9/9/9/9/3ga4", true);
+		startGame("3ag4/9/9/9/9/9/9/9/9/3GA4", true);
 		assertMove("d9-g9", true, false);
-		assertGameState("3AG4/9/9/9/9/9/9/9/9/3ga4", true, true, false);
-	}
-
-	// Black Advisor cannot go outside of the palace.
-	@Test
-	public void blackAdvisorCannotGoOutsideThePalaceA() {
-		startGame("3AG4/9/9/9/9/9/9/9/9/3ga4", false);
-		assertMove("e0-g2", false, false);
-		assertGameState("3AG4/9/9/9/9/9/9/9/9/3ga4", false, true, true);
-	}
-
-	// Red Advisor cannot go outside of the palace.
-	@Test
-	public void redAdvisorCannotGoOutsideThePalaceB() {
-		startGame("3AG4/9/9/9/9/9/9/9/9/3ga4", true);
-		assertMove("d9-b7", true, false);
-		assertGameState("3AG4/9/9/9/9/9/9/9/9/3ga4", true, true, false);
+		assertGameState("3ag4/9/9/9/9/9/9/9/9/3GA4", true, false, false);
 	}
 
 	// Red General is in danger from the Black Soldier, but red player is on turn and moves the Red Advisor to
@@ -303,6 +305,22 @@ public class TryMoveIntegrationTest {
 		startGame("3g5/3a5/9/2e6/9/9/9/4A4/3S5/3G5", false);
 		assertMove("c6-e4", false, false);
 		assertGameState("3g5/3a5/9/2e6/9/9/9/4A4/3S5/3G5", false, false, false);
+	}
+
+	// The Black Elephant cannot be put across the river.
+	@Test
+	public void blackElephantCannotBePutAcrossTheRive() {
+		startGame("3g5/3a5/9/9/9/9/9/4A4/3S5/3Ge4", false);
+		assertMove("f2-d4", false, false);
+		assertGameState("3g5/3a5/9/9/9/9/9/4A4/3S5/3Ge4", false, false, false);
+	}
+
+	// The Red Elephant cannot be put across the river.
+	@Test
+	public void redElephantCannotBePutAcrossTheRive() {
+		startGame("3gE4/3a5/9/9/9/9/9/4A4/3S5/3G5", true);
+		assertMove("e9-c7", true, false);
+		assertGameState("3gE4/3a5/9/9/9/9/9/4A4/3S5/3G5", true, false, false);
 	}
 
 	// The Red Elephant is trying to cross the river, but this move is not allowed.
@@ -356,7 +374,7 @@ public class TryMoveIntegrationTest {
 		assertGameState("r1eag2hr/4a4/1c2e2c1/4s1C1s/s1s6/6S2/S1h1S3S/2H1E2C1/4A4/R2AG1EHR", true, false, false);
 	}
 
-	// Red Horse captures the Black Rock.
+	// Red Horse captures the Black Rook.
 	@Test
 	public void redHorseCapturesBlackRock() {
 		startGame("1reag4/4a4/4e1hc1/4s1r2/s1s5s/5HS2/S1h1S3S/2H1E2C1/1c2A4/1R1AG1E1R", true);
@@ -392,6 +410,13 @@ public class TryMoveIntegrationTest {
 		assertGameState("1hea1a1h1/4g4/rc3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", true, false, false);
 	}
 
+	@Test
+	public void blackRookMovesTwoStepsUp() {
+		startGame("1hea1a1h1/4g4/rc3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", false);
+		assertMove("a7-a9", false, true);
+		assertGameState("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", true, false, false);
+	}
+
 	// Red Rook moves one vertical step down. Position is empty, so it is a valid move.
 	@Test
 	public void redRookMovesOneStepDOwn() {
@@ -406,6 +431,14 @@ public class TryMoveIntegrationTest {
 		startGame("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", true);
 		assertMove("a2-f2", true, true);
 		assertGameState("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/5R3/4A4/1HE1GAEHR", false, false, false);
+	}
+
+	// Red Rook moves horizontally to the left. Positions are empty, so the move is valid.
+	@Test
+	public void redRookMovesWrong() {
+		startGame("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/5R3/4A4/1HE1GAEHR", true);
+		assertMove("f2-g3", true, false);
+		assertGameState("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/5R3/4A4/1HE1GAEHR", true, false, false);
 	}
 
 	// Black Rook cannot move, because positions between start and target are not empty.
@@ -430,6 +463,14 @@ public class TryMoveIntegrationTest {
 		startGame("1a7/9/9/9/1c7/1s7/9/9/9/1R7", true);
 		assertMove("b0-b9", true, false);
 		assertGameState("1a7/9/9/9/1c7/1s7/9/9/9/1R7", true, false, false);
+	}
+
+	// Red Rook cannot move, because there is only one figure between the start and target position.
+	@Test
+	public void blackRookCannotMoveAndAttackVerticallyBecauseOneFigureOnItsWay() {
+		startGame("1a7/9/9/9/9/1s7/9/9/9/1R7", true);
+		assertMove("b0-b9", true, false);
+		assertGameState("1a7/9/9/9/9/1s7/9/9/9/1R7", true, false, false);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -460,7 +501,6 @@ public class TryMoveIntegrationTest {
 		assertGameState("rheagaehr/9/3c3c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEAGAEHR", true, false, false);
 	}
 
-
 	// Red Cannon moves one position vertically up.
 	@Test
 	public void redCannonMovesOneStepUp() {
@@ -475,6 +515,14 @@ public class TryMoveIntegrationTest {
 		startGame("4gae2/r2h1C3/2cae1r2/s1s1s3s/4c1s2/9/S3S1S1h/H2GC4/4A4/R1E2AEHR", true);
 		assertMove("f8-a8", true, true);
 		assertGameState("4gae2/C2h5/2cae1r2/s1s1s3s/4c1s2/9/S3S1S1h/H2GC4/4A4/R1E2AEHR", false, false, false);
+	}
+
+	// Red Cannon moves (to an empty position) and has one figure on the path - move is not valid.
+	@Test
+	public void cannonTriesToMoveToAnEMptyPositionButAndThereIsOneFigureOnThePath() {
+		startGame("4gae2/r2h1C3/2cae1r2/s1s1s3s/4c1s2/9/S3S1S1h/H2GC4/4A4/R1E2AEHR", true);
+		assertMove("f8-b8", true, false);
+		assertGameState("4gae2/r2h1C3/2cae1r2/s1s1s3s/4c1s2/9/S3S1S1h/H2GC4/4A4/R1E2AEHR", true, false, false);
 	}
 
 	// Red Cannon captures Black Soldier.
@@ -526,7 +574,7 @@ public class TryMoveIntegrationTest {
 	public void redSoldierChecksBlackRedWins() {
 		startGame("9/4g4/4S4/9/9/9/9/9/9/4G4", true);
 		assertMove("e7-e8", true, true);
-		assertGameState("9/4S4/9/9/9/9/9/9/9/4G4", true, true, true);
+		assertGameState("9/4S4/9/9/9/9/9/9/9/4G4", false, true, true);
 	}
 
 	// Red Soldier cannot move backwards (not in the direction of the Black Palace).
@@ -545,7 +593,7 @@ public class TryMoveIntegrationTest {
 		assertGameState("3g5/3a5/9/3S5/9/3C5/9/4AH3/3S5/3G5", false, false, false);
 	}
 
-	// Black soldier is at the end of the board and cannot move vertically back in the direction of his Palace.
+	// Black Soldier is at the end of the board and cannot move vertically back in the direction of his Palace.
 	@Test
 	public void blackSoldierTriesToMoveVerticallyWhenAtTheEndOfTheBoard() {
 		startGame("3g5/3a5/9/3eS4/9/3C5/9/4AH3/3S5/3G2s2", false);
@@ -553,7 +601,7 @@ public class TryMoveIntegrationTest {
 		assertGameState("3g5/3a5/9/3eS4/9/3C5/9/4AH3/3S5/3G2s2", false, false, false);
 	}
 
-	// Red Soldier is at the upper end of teh board and cannot move backwards.
+	// Red Soldier is at the upper end of the board and cannot move backwards.
 	@Test
 	public void redSoldierAtTheEndOfTheBoard() {
 		startGame("3S5/9/9/9/9/9/9/9/9/9", true);
@@ -580,7 +628,7 @@ public class TryMoveIntegrationTest {
 	///////////////////////////////////////////////////////////////////////////
 	// GAME SITUATIONS
 
-	// Red Rock takes Black Advisor, on the next turn Black player should not have any valid moves,
+	// Red Rock takes Black Advisor, on the next turn Black player still have valid moves? Weird situation.
 	@Test
 	public void GameSituation2a() {
 		startGame("3ag4/9/9/9/9/9/9/3R5/9/3G5", true);
@@ -596,59 +644,38 @@ public class TryMoveIntegrationTest {
 		assertGameState("3R5/4g4/9/9/9/9/9/9/9/3G5", true, false, false);
 	}
 
-	// Black player cannot move any of its figures, red player wins by stalemate.
+	// see blackSoldierAtTheEndOfTheBoardCapturesRedAdvisor()
+	// this is indeed a valid board and everything
+	// but the move here doesn't move!
 	@Test
-	public void blackPlayerHasNoMoreValidMoves() {
-		startGame("4ga3/3Sa4/9/9/9/9/9/9/9/4G4", false);
-		assertMove("e9-d9", false, false);
-		assertGameState("4ga3/3Sa4/9/9/9/9/9/9/9/4G4", false, true, true);
+	public void everyFigureNeedsToMove() {
+		startGame("9/9/9/9/9/9/9/9/9/3sA4", false);
+		assertMove("d0-d0", false, false);
+		assertGameState("9/9/9/9/9/9/9/9/9/3sA4", false, false, false);
 	}
 
-	// Black is in check by the Red Rock and Red General.
+	// Black is in check by the Red Rock and Red General, Red player makes its turn and after that the Black player
+	// does not have any valid moves, so the game ends and the Red player wins.
 	@Test
 	public void blackPlayerIsInCheckByRock() {
-		startGame("3g5/9/9/9/9/3R5/9/4G4/9/9", false);
-		assertMove("d9-d8", false, false);
+		startGame("3g5/9/9/9/9/R8/9/4G4/9/9", true);
+		assertMove("a4-d4", true, true);
 		assertGameState("3g5/9/9/9/9/3R5/9/4G4/9/9", false, true, true);
 	}
 
-	// Black player is in check by the Red Soldier and the Red General.
-	@Test
-	public void blackPlayerIsInCheckBySoldier() {
-		startGame("9/5h3/5g3/5S3/9/9/9/9/9/4G4", false);
-		assertMove("f7-e7", false, false);
-		assertGameState("9/5h3/5g3/5S3/9/9/9/9/9/4G4", false, true, true);
-	}
-
-	// Black player is in check by Red Cannon A.
-	@Test
-	public void blackPlayerIsInCheckByRedCannonA() {
-		startGame("9/5g3/9/9/9/9/9/5S3/5C3/4G4", false);
-		assertMove("f8-f7", false, false);
-		assertGameState("9/5g3/9/9/9/9/9/5S3/5C3/4G4", false, true, true);
-	}
-
-	// Black player is in check by the Red Cannon B.
-	@Test
-	public void blackPlayerIsInCheckByRedCannonB() {
-		startGame("9/5g3/9/9/9/9/9/5S3/5C3/4G4", false);
-		assertMove("f8-e8", false, false);
-		assertGameState("9/5g3/9/9/9/9/9/5S3/5C3/4G4", false, true, true);
-	}
-
-	// The red player has no more valid moves.
+	// Red Player is in check.
 	@Test
 	public void redPlayerHasNoMoreValidMoves() {
-		startGame("2ea2C2/4a1gH1/9/4s4/2e5s/6S2/s1s1SRh1S/3r1G3/9/3A5", true);
-		assertMove("f2-f1", true, false);
+		startGame("2ea2C2/3ra1gH1/9/4s4/2e5s/6S2/s1s1SRh1S/5G3/9/3A5", false);
+		assertMove("d8-d2", false, true);
 		assertGameState("2ea2C2/4a1gH1/9/4s4/2e5s/6S2/s1s1SRh1S/3r1G3/9/3A5", true, true, false);
 	}
 
-	// Making a move from an empty position is not possible.
+	// Moving to a target position having a figure of the same color is not possible.
 	@Test
-	public void tryingToMoveFromEmptyPosition() {
+	public void tryingToMoveToSameFigureColor() {
 		startGame("3g5/3a5/9/9/9/9/9/4A4/3S5/3G5", true);
-		assertMove("g0-f0", true, false);
+		assertMove("d0-d1", true, false);
 		assertGameState("3g5/3a5/9/9/9/9/9/4A4/3S5/3G5", true, false, false);
 	}
 
@@ -660,107 +687,86 @@ public class TryMoveIntegrationTest {
 		assertGameState("3Sa4/9/9/9/9/9/9/9/9/9", true, false, false);
 	}
 
-	// Advisors and Generals cannot be placed outside the palace, but why is finished true?
+	// Advisors and Generals cannot be placed outside the palace
 	@Test
 	public void advisorsAndGeneralsOutsidePalace() {
-		startGame("A1G6/9/9/9/9/9/9/9/9/ag7", true);
+		startGame("AG7/9/9/9/9/9/9/9/9/ag7", true);
 		assertMove("a9-a8", true, false);
-		assertGameState("A1G6/9/9/9/9/9/9/9/9/ag7", true, true, false);
+		assertGameState("AG7/9/9/9/9/9/9/9/9/ag7", true, false, false);
 	}
 
-	// Encountering the character 'p' should transform it to "null" - not a figure, since this
+	// Encountering the character 'p' - should be transformed to "null" - not a figure, since this
 	// character representation is not a valid one.
 	@Test
 	public void boardWithAnInvalidCharacter() {
 		startGame("A1G6/9/9/1p7/9/9/9/9/9/ag7", true);
 		assertMove("a9-a8", true, false);
-		assertGameState("A1G6/9/9/9/9/9/9/9/9/ag7", true, true, false);
+		assertGameState("A1G6/9/9/9/9/9/9/9/9/ag7", true, false, false);
 	}
 
+	// moveString is not correct.
+	@Test
+	public void moveStringIsNotCorrect() {
+		startGame("A1G6/9/9/9/9/9/9/9/9/ag7", true);
+		assertMove("gibberish-gibberish", true, false);
+		assertGameState("A1G6/9/9/9/9/9/9/9/9/ag7", true, false, false);
+	}
 
-	///////////////////////////////////////////////////////////////////////////
-	// Not sure situations??
+	// Next player must be the Black player, but instead Red Player on turn - not valid.
+	@Test
+	public void wrongPlayerOnTurnRed() {
+		startGame("3Rg4/9/9/9/9/9/9/9/9/3G5", false);
+		assertMove("e9-f9", true, false);
+		assertGameState("3Rg4/9/9/9/9/9/9/9/9/3G5", false, false, false);
+	}
 
-	// Black Cannon Takes the Red General and black player wins. ??
-	// General should stay in the game!
-//	@Test
-//	public void blackCannonTakesRedGeneral() {
-//		startGame("4g4/9/9/9/9/9/4c4/4E4/9/4G4", false);
-//		assertMove("e3-e0", false, true);
-//		assertGameState("4g4/9/9/9/9/9/9/4E4/9/4c4", false, true, false);
-//	}
+	// Black is on turn (should have valid moves, although it is not a valid game situation) - Black General cannot take
+	// the Red Rook, because this would place him in "direct stare".
+	@Test
+	public void GameSituation2b() {
+		startGame("3Rg4/9/9/9/9/9/9/9/9/3G5", false);
+		assertMove("e9-d9", false, false);
+		assertGameState("3Rg4/9/9/9/9/9/9/9/9/3G5", false, false, false);
+	}
 
-	// Black is on turn, but should not have valid moves -> not sure here??
-//	@Test
-//	public void GameSituation2b() {
-//		System.out.println("///////////////////////// Start test 'GameSituation2b' /////////////////////////");
-//		System.out.println();
-//		startGame("3Rg4/9/9/9/9/9/9/9/9/3G5", false);
-//		assertMove("e9-d9", false, false);
-//		assertGameState("3Rg4/9/9/9/9/9/9/9/9/3G5", false, true, true);
-//	}
+	// Red player tries to use a Black player's figure - not valid.
+	@Test
+	public void redPlayerTriesToMoveBlackPlayersFigure() {
+		startGame("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", true);
+		assertMove("a9-a8", true, false);
+		assertGameState("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", true, false, false);
+	}
 
-	// Red rock finally captures the black general
-//	@Test
-//	public void GameSituation2d() {
-//		System.out.println("///////////////////////// Start test 'GameSituation2d' /////////////////////////");
-//		System.out.println();
-//		startGame("3R5/4g4/9/9/9/9/9/9/9/3G5", true);
-//		assertMove("d9-e9", true, true);
-//		assertGameState("4R4/4g4/9/9/9/9/9/9/9/3G5", true, true, true);
-//	}
+	// Next player on turn must be the Red Player, but it is Black and is also trying to move a red figure - not valid.
+	@Test
+	public void redPlayerOnTurnButBlackTriesToMoveAFigure() {
+		startGame("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", true);
+		assertMove("a9-a8", false, false);
+		assertGameState("rhea1a1h1/4g4/1c3r3/7cs/s1s1C4/9/S1S3SCS/R8/4A4/1HE1GAEHR", true, false, false);
+	}
 
+	// Next player on turn must be the Red Player, but it is Black - not valid.
+	@Test
+	public void wrongPlayerOnTurnBlack() {
+		startGame("3Rg4/9/9/9/9/9/9/9/9/3G5", true);
+		assertMove("d9-d8", false, false);
+		assertGameState("3Rg4/9/9/9/9/9/9/9/9/3G5", true, false, false);
+	}
 
+	// If Red General moves, the Black Soldier can take it - not a valid move!
+	@Test
+	public void redGeneralMovesIntoCheck() {
+		startGame("9/3ga4/9/9/9/9/9/3s5/9/3G5", true);
+		assertMove("d0-d1", true, false);
+		assertGameState("9/3ga4/9/9/9/9/9/3s5/9/3G5", true, false, false);
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	// Start a regular game with the regular game initial state, make an invalid move. The state stays the same.
+	@Test
+	public void noStateGiven() {
+		startGame();
+		assertMove("n0-x1", true, false);
+		assertGameState("rheagaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEAGAEHR", true, false, false);
+	}
+	
 }

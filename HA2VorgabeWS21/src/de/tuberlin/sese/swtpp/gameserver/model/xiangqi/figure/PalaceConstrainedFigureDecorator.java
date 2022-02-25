@@ -1,7 +1,5 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure;
-
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.Position;
-import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.XiangqiGame;
 
 import java.util.function.Predicate;
 
@@ -52,32 +50,18 @@ public class PalaceConstrainedFigureDecorator implements IFigure {
         return isPositionInPlayersPalace(targetPosition) && this.instance.isValidMoveDelta(deltaPosition, isFree);
     }
 
-    @Override
-    public boolean hasCrossedRiver() {
-        return this.instance.hasCrossedRiver();
-    }
-
-    @Override
-    public boolean wouldCrossRiverWithMove(Position moveDelta) {
-        return this.instance.wouldCrossRiverWithMove(moveDelta);
-    }
-
-    @Override
-    public int yAxisDirection() {
-        return this.instance.yAxisDirection();
-    }
-
     private boolean isPositionInPlayersPalace(Position targetPosition) {
         boolean xInPalaceRange = targetPosition.x >= 3 && targetPosition.x <= 5;
 
         boolean yInPalaceRange;
         if (this.getColor() == FigureColor.BLACK) {
-            yInPalaceRange = targetPosition.y >= 0 && targetPosition.y <= 2;
+            yInPalaceRange = targetPosition.y <= 2;
         }
         else {
-            yInPalaceRange = targetPosition.y >= 7 && targetPosition.y <= 9;
+            yInPalaceRange = targetPosition.y >= 7;
         }
 
         return xInPalaceRange && yInPalaceRange;
     }
+
 }

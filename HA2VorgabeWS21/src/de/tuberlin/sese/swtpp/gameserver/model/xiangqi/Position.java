@@ -1,14 +1,13 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi;
-
 import java.io.Serializable;
 
 public class Position implements Serializable {
 
+	private static final long serialVersionUID = 5482937570941095306L;
+
 	public int x;
 	public int y;
 	private static final int ROWS_COUNT = 9;
-
-	private static final long serialVersionUID = 5482937570941095306L;
 
 	public Position(int x, int y) {
 		super();
@@ -36,14 +35,10 @@ public class Position implements Serializable {
 		return new Position(this.x, this.y);
 	}
 
-//	@Override
-////	public String toString() {
-//////		char rowRepresentation = (char) ((ROWS_COUNT - this.x) + '0');
-//////		char columnRepresentation = (char) (this.y + 'a');
-////
-////		char rowRepresentation = (char) ((ROWS_COUNT - this.y) + '0');
-////		char columnRepresentation = (char) (this.x + 'a');
-////
-////		return Character.toString(columnRepresentation) + rowRepresentation;
-////	}
+	@Override
+	public boolean equals(Object other) {
+		Position otherPosition = (Position) other;
+		return this.x == otherPosition.x && this.y == otherPosition.y;
+	}
+
 }

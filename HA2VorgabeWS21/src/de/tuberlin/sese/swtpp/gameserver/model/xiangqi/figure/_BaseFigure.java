@@ -33,12 +33,10 @@ public abstract class _BaseFigure implements IFigure {
 		return this.position;
 	}
 
-	@Override
 	public boolean hasCrossedRiver() {
 		return this.isPositionBeyondRiver(this.position);
 	}
 
-	@Override
 	public boolean wouldCrossRiverWithMove(Position moveDelta) {
 		Position targetPosition = this.position.offsetWith(moveDelta);
 		return this.isPositionBeyondRiver(targetPosition);
@@ -52,7 +50,6 @@ public abstract class _BaseFigure implements IFigure {
 		return _position.y <= 4;
 	}
 
-	@Override
 	public int yAxisDirection() {
 		return this.getColor() == FigureColor.BLACK ? 1 : -1;
 	}

@@ -1,8 +1,5 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure;
-
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.Position;
-import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.XiangqiGame;
-
 import java.io.Serializable;
 import java.util.function.Predicate;
 
@@ -18,8 +15,6 @@ public interface IFigure extends Serializable {
 
     String getCharacterRepresentation();
 
-    // boolean checkMove(String moveString, IFigure[][] board, XiangqiGame xg);
-
     /**
      *
      * @param deltaPosition
@@ -33,9 +28,4 @@ public interface IFigure extends Serializable {
      */
     boolean isValidMoveDelta(Position deltaPosition, Predicate<Position> isFree);
 
-    boolean hasCrossedRiver();
-
-    boolean wouldCrossRiverWithMove(Position moveDelta);
-
-    int yAxisDirection();
 }

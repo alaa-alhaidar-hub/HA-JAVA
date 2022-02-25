@@ -18,14 +18,12 @@ public class XiangqiGame extends Game implements Serializable {
 	/************************
 	 * member
 	 ***********************/
-	//ParsingString ps = new ParsingString();
 	// just for better comprehensibility of the code: assign red and black player
 	private Player blackPlayer;
 	private Player redPlayer;
 	
 	
 	// internal representation of the game state
-	// TODO: insert additional game data here
 	public String state;
 	public Board board;
 
@@ -36,7 +34,7 @@ public class XiangqiGame extends Game implements Serializable {
 	public XiangqiGame() {
 		super();
 		// TODO: initialization of game state can go here
-		state = "rheagaehr/9/1c5c1/s1s1s1s1s/9/4H4/S1S1S1S1S/1C5C1/9/RHEAGAE2";
+		state = "rheagaehr/9/1c5c1/s1s1s1s1s/9/9/S1S1S1S1S/1C5C1/9/RHEAGAEHR";
 		setBoard(state);
 	}
 
@@ -216,9 +214,6 @@ public class XiangqiGame extends Game implements Serializable {
 
 	@Override
 	public String getBoard() {
-		if (board == null) {
-			return "";
-		}
 		return board.getCurrentBoardStateInStringRepresentation();
 	}
 
@@ -232,8 +227,16 @@ public class XiangqiGame extends Game implements Serializable {
 		return new Position(moveStringPositions[1]);
 	}
 
+	public boolean correctMoveString(String moveString) {
+		return moveString.matches("[a-i][0-9]-[a-i][0-9]");
+	}
+
 	@Override
 	public boolean tryMove(String moveString, Player player) {
+		if (!correctMoveString(moveString)) {
+			return false;
+		}
+
 		Position startPosition = getStartPosition(moveString);
 		Position targetPosition = getTargetPosition(moveString);
 
@@ -242,12 +245,10 @@ public class XiangqiGame extends Game implements Serializable {
 
 		FigureColor playerColor = player == redPlayer ? FigureColor.RED : FigureColor.BLACK;
 
-		// If the current game is not valid or is finished, or has not started, the move cannot be made.
-//		if (player.isGameInvalid() || this.isFinished() || !this.isStarted() || this.error) {
-//			return false;
-//		}
+		if (nextPlayer != player) {
+			return false;
+		}
 
-		// If there is no figure on the starting position, the move is not valid.
 		if (figureAtStart == null) {
 			return false;
 		}
@@ -256,37 +257,13 @@ public class XiangqiGame extends Game implements Serializable {
 			return false;
 		}
 
-		if (figureAtStart.getColor() == FigureColor.RED && player == redPlayer) {
-			if (!board.hasValidMoves(FigureColor.RED)) {
-				regularGameEnd(blackPlayer);
-				return false;
-			}
-		}
-		else if (figureAtStart.getColor() == FigureColor.BLACK && player == blackPlayer) {
-			if (!board.hasValidMoves(FigureColor.BLACK)){
-				regularGameEnd(redPlayer);
-				return false;
-			}
+		if (startPosition.equals(targetPosition)) {
+			return false;
 		}
 
 		if (!board.isValidFigureMove(figureAtStart, startPosition, targetPosition)) {
 			return false;
 		}
-
-		// TODO: implement when the player's figure is going to take the general
-//		if (board.figureAt(targetPosition) != null) {
-//			if (board.isValidFigureMove(figureAtStart, startPosition, targetPosition)
-//					&& figureAtTarget.getCharacterRepresentation().equals("G") && player == blackPlayer) {
-//				regularGameEnd(redPlayer);
-//				return true;
-//			}
-//
-//			if (board.isValidFigureMove(figureAtStart, startPosition, targetPosition)
-//					&& figureAtTarget.getCharacterRepresentation().equals("g") && player == redPlayer) {
-//				regularGameEnd(blackPlayer);
-//				return true;
-//			}
-//		}
 
 		board.removeFigure(figureAtTarget);
 		board.moveFigure(figureAtStart, targetPosition);
@@ -295,22 +272,40 @@ public class XiangqiGame extends Game implements Serializable {
 		history.add(currentMove);
 		setHistory(history);
 
-		if (figureAtStart.getColor() == FigureColor.RED && player == redPlayer) {
-			if (!board.hasValidMoves(FigureColor.BLACK)) {
-				regularGameEnd(redPlayer);
-				return true;
-			}
-		}
-
-		else if (figureAtStart.getColor() == FigureColor.BLACK && player == blackPlayer) {
-			if (!board.hasValidMoves(FigureColor.RED)) {
-				regularGameEnd(blackPlayer);
-				return true;
-			}
-		}
-
-		setNextPlayer(isRedNext() ? blackPlayer : redPlayer);
+		endGameIfPlayerWon(player);
+		
+		changePlayer(player);
 
 		return true;
 	}
+
+	private void endGameIfPlayerWon(Player player) {
+	    Player otherPlayer = getOtherPlayer(player);
+	    FigureColor otherPlayerFigureColor = getPlayerFigureColor(otherPlayer);
+        if (!board.hasValidMoves(otherPlayerFigureColor)) {
+            regularGameEnd(player);
+            changePlayer(player);
+        }
+    }
+
+    private void changePlayer(Player currentPlayer) {
+	    setNextPlayer(getOtherPlayer(currentPlayer));
+    }
+
+	private FigureColor getPlayerFigureColor(Player player) {
+	    if (player == redPlayer) {
+	        return FigureColor.RED;
+        }
+
+	    return FigureColor.BLACK;
+    }
+
+    private Player getOtherPlayer(Player player) {
+	    if (player == redPlayer) {
+	        return blackPlayer;
+        }
+
+	    return redPlayer;
+    }
+
 }

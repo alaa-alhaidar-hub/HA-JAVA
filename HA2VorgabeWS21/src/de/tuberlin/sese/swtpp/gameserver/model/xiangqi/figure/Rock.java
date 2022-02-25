@@ -1,15 +1,10 @@
 package de.tuberlin.sese.swtpp.gameserver.model.xiangqi.figure;
-
 import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.Position;
-import de.tuberlin.sese.swtpp.gameserver.model.xiangqi.XiangqiGame;
-
 import java.io.Serializable;
 import java.util.function.Predicate;
 
 public class Rock extends _BaseFigure implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 2345235451070921766L;
 
 	@Override
@@ -19,6 +14,7 @@ public class Rock extends _BaseFigure implements Serializable {
 
 	@Override
 	public boolean isValidMoveDelta(Position deltaPosition, Predicate<Position> isFree) {
+
 		Position deltaPositionCopy = deltaPosition.copy();
 
 		// return +/- 1 depending on the delta
@@ -26,7 +22,7 @@ public class Rock extends _BaseFigure implements Serializable {
 		int signY = (int) Math.signum(deltaPosition.y);
 
 		// moving horizontally left or right, y does not change
-		if (deltaPositionCopy.y == 0 && (deltaPositionCopy.x != 0))
+		if (deltaPositionCopy.y == 0)
 		{
 			while(Math.abs(deltaPositionCopy.x) > 1)
 			{
@@ -40,7 +36,7 @@ public class Rock extends _BaseFigure implements Serializable {
 		}
 
 		// moving vertically up or down, x does not change
-		if (deltaPositionCopy.x == 0 && (deltaPositionCopy.y != 0))
+		if (deltaPositionCopy.x == 0)
 		{
 			while(Math.abs(deltaPositionCopy.y) > 1)
 			{
